@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coin Flip</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root {
+    --blue: #007aff;
+    --purple: #af52de;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    /* Matches LinearGradient([blue.opacity(0.5), purple.opacity(0.5)], top → bottom) over a white window */
+    background:
+      linear-gradient(to bottom, rgba(0,122,255,0.5), rgba(175,82,222,0.5)),
+      #fff;
+    font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  #result {
+    font-size: clamp(40px, 12vw, 60px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 50px;
+    min-height: 1.2em;
+    transition: transform 0.2s ease;
+  }
+  #result.pop { transform: scale(1.08); }
+  button {
+    font: inherit;
+    font-size: 22px;
+    width: 200px;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.9);
+    color: var(--blue);
+    box-shadow: 0 5px 10px rgba(142,142,147,0.4);
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.2s ease;
+  }
+  button:active:not(:disabled) { transform: scale(0.97); }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <div id="result" aria-live="polite">Tap to Flip</div>
+  <button id="flip" type="button">Flip Coin</button>
+</main>
+<script>
+  const result = document.getElementById("result");
+  const btn = document.getElementById("flip");
+
+  function flipCoin() {
+    btn.disabled = true;
+    result.textContent = "Flipping...";
+    result.classList.remove("pop");
+
+    // Simulate the flipping process with a 1-second delay (same as the Swift version)
+    setTimeout(() => {
+      const r = new Uint32Array(1);
+      crypto.getRandomValues(r);
+      result.textContent = (r[0] & 1) ? "Heads" : "Tails";
+      result.classList.add("pop");
+      setTimeout(() => result.classList.remove("pop"), 200);
+      btn.disabled = false;
+    }, 1000);
+  }
+
+  btn.addEventListener("click", flipCoin);
+</script>
+</body>
+</html>
